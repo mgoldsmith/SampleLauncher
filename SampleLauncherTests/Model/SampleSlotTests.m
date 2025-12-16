@@ -7,7 +7,6 @@
 #import "SampleSlot.h"
 
 // Test sample configuration - change this to use a different sample
-static NSString * const kTestSampleFilename = @"Rotations 3 Kick.aif";
 static NSString * const kTestSampleName = @"Rotations 3 Kick";
 
 @interface SampleSlotTests : XCTestCase
@@ -21,8 +20,17 @@ static NSString * const kTestSampleName = @"Rotations 3 Kick";
 - (void)setUp {
     self.slot = [[SampleSlot alloc] init];
 
-    // Set up audio engine and attach player node
+    // Set up audio engine in manual rendering mode to avoid hardware access during tests
     self.engine = [[AVAudioEngine alloc] init];
+
+    // Enable manual rendering mode (offline processing, no hardware I/O)
+    AVAudioFormat *renderFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:44800.0
+                                                                                 channels:2];
+    [self.engine enableManualRenderingMode:AVAudioEngineManualRenderingModeOffline
+                                    format:renderFormat
+                         maximumFrameCount:4096
+                                     error:nil];
+
     [self.engine attachNode:self.slot.playerNode];
     [self.engine connect:self.slot.playerNode
                       to:self.engine.mainMixerNode
