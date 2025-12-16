@@ -30,6 +30,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C9086D5C2EF2101100DA5B7F /* StockSamples */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StockSamples;
+			sourceTree = "<group>";
+		};
 		C9B06B9B2EF2042F00A08D5C /* SampleLauncher */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = SampleLauncher;
@@ -79,6 +84,7 @@
 				C9B06BB02EF2043000A08D5C /* SampleLauncherTests */,
 				C9B06BBA2EF2043000A08D5C /* SampleLauncherUITests */,
 				C9B06B9A2EF2042F00A08D5C /* Products */,
+				C9086D5C2EF2101100DA5B7F /* StockSamples */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,6 +114,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				C9086D5C2EF2101100DA5B7F /* StockSamples */,
 				C9B06B9B2EF2042F00A08D5C /* SampleLauncher */,
 			);
 			name = SampleLauncher;
@@ -131,6 +138,7 @@
 				C9B06BAF2EF2043000A08D5C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				C9086D5C2EF2101100DA5B7F /* StockSamples */,
 				C9B06BB02EF2043000A08D5C /* SampleLauncherTests */,
 			);
 			name = SampleLauncherTests;
