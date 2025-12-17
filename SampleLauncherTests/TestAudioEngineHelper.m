@@ -14,14 +14,16 @@
     // Enable manual rendering mode (offline processing, no hardware I/O)
     AVAudioFormat *renderFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:48000.0
                                                                                  channels:2];
-    [engine enableManualRenderingMode:AVAudioEngineManualRenderingModeOffline
-                               format:renderFormat
-                    maximumFrameCount:4096
-                                error:nil];
-
     NSError *error = nil;
-    [engine startAndReturnError:&error];
-    XCTAssertNil(error, @"Engine should start without error");
+    BOOL success = [engine enableManualRenderingMode:AVAudioEngineManualRenderingModeOffline
+                                              format:renderFormat
+                                   maximumFrameCount:4096
+                                               error:&error];
+    XCTAssertTrue(success, @"Failed to enable manual rendering mode: %@", error);
+
+    error = nil;
+    success = [engine startAndReturnError:&error];
+    XCTAssertTrue(success, @"Failed to start engine: %@", error);
 
     return engine;
 }
