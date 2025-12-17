@@ -48,6 +48,15 @@ static NSString * const kTestSampleName = @"Rotations 3 Kick";
 }
 
 - (void)tearDown {
+    // Stop all slots first
+    for (NSUInteger i = 0; i < self.bank.capacity; i++) {
+        SampleSlot *slot = [self.bank slotAtIndex:i];
+        [slot stop];
+    }
+
+    // Stop the engine
+    [self.engine stop];
+
     // Detach any attached nodes
     for (NSUInteger i = 0; i < self.bank.capacity; i++) {
         SampleSlot *slot = [self.bank slotAtIndex:i];
@@ -56,7 +65,6 @@ static NSString * const kTestSampleName = @"Rotations 3 Kick";
         }
     }
 
-    [self.engine stop];
     self.engine = nil;
     self.bank = nil;
 }
