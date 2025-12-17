@@ -8,7 +8,7 @@
 #import "TestAudioEngineHelper.h"
 
 // Test sample configuration - change this to use a different sample
-static NSString * const kTestSampleName = @"Rotations 3 Kick";
+static NSString * const kTestSampleName = @"01 Kick";
 
 @interface SampleSlotTests : XCTestCase
 @property (nonatomic, strong) SampleSlot *slot;

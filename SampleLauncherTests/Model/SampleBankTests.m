@@ -9,7 +9,7 @@
 #import "TestAudioEngineHelper.h"
 
 // Test sample configuration
-static NSString * const kTestSampleName = @"Rotations 3 Kick";
+static NSString * const kTestSampleName = @"01 Kick";
 
 @interface SampleBankTests : XCTestCase
 @property (nonatomic, strong) SampleBank *bank;
