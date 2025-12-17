@@ -6,6 +6,7 @@
 #import <XCTest/XCTest.h>
 #import "SampleBank.h"
 #import "SampleSlot.h"
+#import "TestAudioEngineHelper.h"
 
 // Test sample configuration
 static NSString * const kTestSampleName = @"Rotations 3 Kick";
@@ -21,20 +22,8 @@ static NSString * const kTestSampleName = @"Rotations 3 Kick";
 - (void)setUp {
     self.bank = [[SampleBank alloc] initWithCapacity:8];
 
-    // Set up audio engine in manual rendering mode to avoid hardware access during tests
-    self.engine = [[AVAudioEngine alloc] init];
-
-    // Enable manual rendering mode (offline processing, no hardware I/O)
-    AVAudioFormat *renderFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:48000.0
-                                                                                 channels:2];
-    [self.engine enableManualRenderingMode:AVAudioEngineManualRenderingModeOffline
-                                    format:renderFormat
-                         maximumFrameCount:4096
-                                     error:nil];
-
-    NSError *error = nil;
-    [self.engine startAndReturnError:&error];
-    XCTAssertNil(error, @"Engine should start without error");
+    // Set up audio engine in manual rendering mode
+    self.engine = [TestAudioEngineHelper createTestEngineWithTestCase:self];
 
     // Get path to test sample from test bundle
     NSBundle *testBundle = [NSBundle bundleForClass:[self class]];
