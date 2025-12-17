@@ -24,7 +24,7 @@ static NSString * const kTestSampleName = @"Rotations 3 Kick";
     self.engine = [[AVAudioEngine alloc] init];
 
     // Enable manual rendering mode (offline processing, no hardware I/O)
-    AVAudioFormat *renderFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:44800.0
+    AVAudioFormat *renderFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:48000.0
                                                                                  channels:2];
     [self.engine enableManualRenderingMode:AVAudioEngineManualRenderingModeOffline
                                     format:renderFormat
