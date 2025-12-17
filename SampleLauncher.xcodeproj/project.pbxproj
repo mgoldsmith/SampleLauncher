@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C94470522EF36CB300627E8E /* StockSamples in Resources */ = {isa = PBXBuildFile; fileRef = C94470512EF36CAE00627E8E /* StockSamples */; };
+		C94470532EF36CB300627E8E /* StockSamples in Resources */ = {isa = PBXBuildFile; fileRef = C94470512EF36CAE00627E8E /* StockSamples */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C9B06BAE2EF2043000A08D5C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,17 +29,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C94470512EF36CAE00627E8E /* StockSamples */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StockSamples; sourceTree = "<group>"; };
 		C9B06B992EF2042F00A08D5C /* SampleLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B06BAD2EF2043000A08D5C /* SampleLauncherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleLauncherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B06BB72EF2043000A08D5C /* SampleLauncherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleLauncherUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C9086D5C2EF2101100DA5B7F /* StockSamples */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = StockSamples;
-			sourceTree = "<group>";
-		};
 		C9B06B9B2EF2042F00A08D5C /* SampleLauncher */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = SampleLauncher;
@@ -84,7 +85,7 @@
 				C9B06BB02EF2043000A08D5C /* SampleLauncherTests */,
 				C9B06BBA2EF2043000A08D5C /* SampleLauncherUITests */,
 				C9B06B9A2EF2042F00A08D5C /* Products */,
-				C9086D5C2EF2101100DA5B7F /* StockSamples */,
+				C94470512EF36CAE00627E8E /* StockSamples */,
 			);
 			sourceTree = "<group>";
 		};
@@ -114,7 +115,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				C9086D5C2EF2101100DA5B7F /* StockSamples */,
 				C9B06B9B2EF2042F00A08D5C /* SampleLauncher */,
 			);
 			name = SampleLauncher;
@@ -138,7 +138,6 @@
 				C9B06BAF2EF2043000A08D5C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				C9086D5C2EF2101100DA5B7F /* StockSamples */,
 				C9B06BB02EF2043000A08D5C /* SampleLauncherTests */,
 			);
 			name = SampleLauncherTests;
@@ -219,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C94470522EF36CB300627E8E /* StockSamples in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +226,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C94470532EF36CB300627E8E /* StockSamples in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

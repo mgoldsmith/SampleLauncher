@@ -28,7 +28,8 @@ static NSString * const kTestSampleName = @"Rotations 3 Kick";
     // Get path to test sample from test bundle
     NSBundle *testBundle = [NSBundle bundleForClass:[self class]];
     self.testSamplePath = [testBundle pathForResource:kTestSampleName
-                                                ofType:@"aif"];
+                                                ofType:@"aif"
+                                                inDirectory:@"StockSamples"];
 
     if (!self.testSamplePath) {
         NSLog(@"WARNING: Test sample not found in bundle. Available resources: %@",
