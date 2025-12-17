@@ -4,6 +4,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
 
 @class SampleSlot;
 
@@ -18,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithCapacity:(NSUInteger)capacity NS_DESIGNATED_INITIALIZER;
 
 - (nullable SampleSlot *)slotAtIndex:(NSUInteger)index;
+
+- (void)attachToAudioEngine:(AVAudioEngine *)engine;
+- (BOOL)loadSampleAtIndex:(NSUInteger)index fromFile:(NSString *)filePath error:(NSError **)error;
 
 @end
 

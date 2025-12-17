@@ -47,4 +47,33 @@
     return loadedCount;
 }
 
+- (void)attachToAudioEngine:(AVAudioEngine *)engine {
+    for (NSUInteger i = 0; i < self.capacity; i++) {
+        SampleSlot *slot = self.slots[i];
+
+        // Only attach slots that have loaded samples
+        if (!slot.format) {
+            continue;
+        }
+
+        [engine attachNode:slot.playerNode];
+        [engine connect:slot.playerNode
+                     to:engine.mainMixerNode
+                 format:slot.format];
+    }
+}
+
+- (BOOL)loadSampleAtIndex:(NSUInteger)index fromFile:(NSString *)filePath error:(NSError **)error {
+    SampleSlot *slot = [self slotAtIndex:index];
+    if (!slot) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"SampleBankErrorDomain"
+                                         code:1
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Invalid slot index"}];
+        }
+        return NO;
+    }
+    return [slot loadSampleFromFile:filePath error:error];
+}
+
 @end
