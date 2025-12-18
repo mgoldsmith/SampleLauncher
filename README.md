@@ -1,3 +1,7 @@
+## TODO
+
+- Check all these `[super x]` calls.
+
 ## App design
 
 My initial idea was to implement something similar to Native Instruments's Battery, or Ableton's Drum Rack. However, the spec designates that MIDI assignments should `Start/Stop Samples`. Toggling playstates didn't make sense to me for a "sampler" instrument that plays one-shots, so I decided to make the application work with loops and act more like Ableton's clip view.
