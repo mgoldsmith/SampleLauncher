@@ -24,19 +24,22 @@
     self.audioEngine = [[AVAudioEngine alloc] init];
     [self.audioEngine mainMixerNode];
 
-    // Initialize sample bank with 16 slots
+    // Initialize sample bank with stock samples
     self.sampleBank = [[SampleBank alloc] init];
+
+    NSError *error = nil;
+    if (![self loadStockSamples:&error]) {
+        NSLog(@"Failed to load stock samples: %@", error);
+        return;
+    }
 
      // Attach all sample slots to the audio engine
     [self.sampleBank attachToAudioEngine:self.audioEngine];
 
     // Start the audio engine
-    NSError *error = nil;
     if (![self.audioEngine startAndReturnError:&error]) {
         NSLog(@"Failed to start audio engine: %@", error);
     }
-
-//    [[self.sampleBank slotAtIndex:1] play];
 }
 
 
