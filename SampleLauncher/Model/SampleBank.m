@@ -48,18 +48,18 @@
 }
 
 - (void)attachToAudioEngine:(AVAudioEngine *)engine {
-    for (NSUInteger i = 0; i < self.capacity; i++) {
-        SampleSlot *slot = self.slots[i];
+    for (NSUInteger i = 0; i < self.count; i++) {
+        SampleSlot *slot = [self slotAtIndex:i];
 
         // Only attach slots that have loaded samples
-        if (!slot.format) {
+        if (!slot) {
             continue;
         }
 
         [engine attachNode:slot.playerNode];
         [engine connect:slot.playerNode
                      to:engine.mainMixerNode
-                 format:slot.format];
+                 format:nil];
     }
 }
 
