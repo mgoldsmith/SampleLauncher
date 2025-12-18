@@ -13,7 +13,7 @@
 @interface AppDelegate ()
 
 @property (nonatomic, strong) AVAudioEngine *audioEngine;
-@property (nonatomic, strong) SampleBank *sampleBank;
+@property (nonatomic, strong, readwrite) SampleBank *sampleBank;
 
 @end
 
@@ -50,5 +50,59 @@
     return YES;
 }
 
+- (BOOL)loadStockSamples:(NSError **)error {
+    NSString *samplesPath = [[NSBundle mainBundle] pathForResource:@"StockSamples" ofType:nil];
+
+    if (!samplesPath) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"SampleLauncherErrorDomain"
+                                         code:1
+                                     userInfo:@{NSLocalizedDescriptionKey: @"StockSamples folder not found in bundle"}];
+        }
+        return NO;
+    }
+
+    NSError *fileError = nil;
+    NSArray<NSString *> *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:samplesPath error:&fileError];
+
+    if (fileError) {
+        if (error) {
+            *error = fileError;
+        }
+        return NO;
+    }
+
+    // Filter for .aif files and sort alphabetically
+    NSArray<NSString *> *sampleFiles = [[files filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self ENDSWITH '.aif'"]]
+                                        sortedArrayUsingSelector:@selector(compare:)];
+
+    // Load up to capacity samples
+    NSUInteger samplesToLoad = MIN(sampleFiles.count, self.sampleBank.capacity);
+
+    for (NSUInteger i = 0; i < samplesToLoad; i++) {
+        NSString *samplePath = [samplesPath stringByAppendingPathComponent:sampleFiles[i]];
+
+        NSError *loadError = nil;
+        if (![self.sampleBank loadSampleAtIndex:i fromFile:samplePath error:&loadError]) {
+            if (error) {
+                *error = loadError;
+            }
+            return NO;
+        }
+    }
+
+    // Make sure we loaded at least one sample
+    if (self.sampleBank.count == 0) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"SampleLauncherErrorDomain"
+                                         code:2
+                                     userInfo:@{NSLocalizedDescriptionKey: @"No samples were loaded from StockSamples folder"}];
+        }
+        return NO;
+    }
+
+    NSLog(@"Loaded %lu samples into bank", (unsigned long)self.sampleBank.count);
+    return YES;
+}
 
 @end
