@@ -4,6 +4,7 @@
 //
 
 #import "SampleSlotView.h"
+#import "SampleSlot.h"
 
 @interface SampleSlotView ()
 @property (nonatomic, strong) NSTextField *noteLabel;
@@ -118,6 +119,11 @@
 - (void)layout {
     [super layout];
     [self updateProgressLayer];
+}
+
+- (void)updateFromSampleSlot:(SampleSlot *)sampleSlot {
+    self.sampleName = sampleSlot.sampleName;
+    self.isPlaying = sampleSlot.isPlaying;
 }
 
 @end

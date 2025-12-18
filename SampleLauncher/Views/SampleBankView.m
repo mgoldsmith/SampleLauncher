@@ -5,6 +5,8 @@
 
 #import "SampleBankView.h"
 #import "SampleSlotView.h"
+#import "SampleBank.h"
+#import "SampleSlot.h"
 
 // Grid configuration
 static const NSUInteger kNumColumns = 4;
@@ -29,6 +31,12 @@ static const NSInteger kStartingMIDINote = 24; // C2
     if (self) {
         _capacity = capacity;
         [self setupGrid];
+
+        // Observe when samples are loaded
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(samplesDidLoad:)
+                                                     name:@"SamplesDidLoad"
+                                                   object:nil];
     }
     return self;
 }
@@ -105,6 +113,35 @@ static const NSInteger kStartingMIDINote = 24; // C2
     CGFloat height = (cellHeight * numRows) + (spacing * (numRows - 1));
 
     return NSMakeSize(width, height);
+}
+
+- (void)updateFromSampleBank:(SampleBank *)sampleBank {
+    // Log warning if capacities don't match
+    if (sampleBank.capacity != self.capacity) {
+        NSLog(@"Warning: SampleBank capacity (%lu) doesn't match SampleBankView capacity (%lu)",
+              (unsigned long)sampleBank.capacity, (unsigned long)self.capacity);
+    }
+
+    // Update each slot view from corresponding sample slot
+    NSUInteger slotsToUpdate = MIN(sampleBank.capacity, self.capacity);
+
+    for (NSUInteger i = 0; i < slotsToUpdate; i++) {
+        SampleSlot *slot = [sampleBank slotAtIndex:i];
+        SampleSlotView *view = self.slotViews[i];
+
+        if (slot && view) {
+            [view updateFromSampleSlot:slot];
+        }
+    }
+}
+
+- (void)samplesDidLoad:(NSNotification *)notification {
+    SampleBank *sampleBank = notification.object;
+    [self updateFromSampleBank:sampleBank];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

@@ -5,6 +5,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class SampleSlot;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SampleSlotView : NSView
@@ -15,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat progress; // 0.0 to 1.0 for progress meter
 
 - (instancetype)initWithFrame:(NSRect)frameRect noteName:(NSString *)noteName;
+- (void)updateFromSampleSlot:(SampleSlot *)sampleSlot;
 
 @end
 

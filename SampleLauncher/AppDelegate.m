@@ -105,6 +105,10 @@
     }
 
     NSLog(@"Loaded %lu samples into bank", (unsigned long)self.sampleBank.count);
+
+    // Post notification that samples are loaded
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SamplesDidLoad" object:self.sampleBank];
+
     return YES;
 }
 
