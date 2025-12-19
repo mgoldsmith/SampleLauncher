@@ -90,6 +90,9 @@
     AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
     NSArray<NSString *> *sources = [appDelegate.midiInput listSources];
 
+    // Remember the currently selected source name
+    NSString *previousSelection = [self.midiSourcePopup titleOfSelectedItem];
+
     // Clear existing items
     [self.midiSourcePopup removeAllItems];
 
@@ -103,6 +106,17 @@
             [self.midiSourcePopup addItemWithTitle:sourceName];
         }
         [self.midiSourcePopup setEnabled:YES];
+
+        // Try to restore previous selection
+        if (previousSelection && [sources containsObject:previousSelection]) {
+            [self.midiSourcePopup selectItemWithTitle:previousSelection];
+            NSUInteger index = [sources indexOfObject:previousSelection];
+            [appDelegate.midiInput selectSourceAtIndex:index];
+        } else if (sources.count > 0) {
+            // Previous selection no longer available, select first item
+            [self.midiSourcePopup selectItemAtIndex:0];
+            [appDelegate.midiInput selectSourceAtIndex:0];
+        }
     }
 }
 
