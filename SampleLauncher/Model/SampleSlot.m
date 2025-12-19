@@ -48,7 +48,7 @@
     }
 
     [self.playerNode stop];
-    [self.playerNode scheduleBuffer:self.buffer completionHandler:nil];
+    [self.playerNode scheduleBuffer:self.buffer atTime:nil options:AVAudioPlayerNodeBufferLoops completionHandler:nil];
     [self.playerNode play];
 }
 
