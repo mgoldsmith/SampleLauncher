@@ -28,15 +28,18 @@
     [self.midiSourcePopup setTarget:self];
     [self.midiSourcePopup setAction:@selector(midiSourceSelected:)];
 
-    // Set the popup to refresh MIDI sources when clicked
-    [[self.midiSourcePopup menu] setDelegate:self];
-
     [self.view addSubview:self.midiSourcePopup];
 
     // Listen for MIDI input ready notification to populate sources
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(midiInputReady:)
                                                  name:@"MIDIInputReady"
+                                               object:nil];
+
+    // Listen for MIDI device changes to refresh sources
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(midiDevicesChanged:)
+                                                 name:@"MIDIDevicesChanged"
                                                object:nil];
 
     // Create and add sample bank view
@@ -70,6 +73,17 @@
 
 - (void)midiInputReady:(NSNotification *)notification {
     [self refreshMIDISources];
+
+    // Auto-select the first MIDI source on startup
+    AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
+    if (self.midiSourcePopup.numberOfItems > 0 && self.midiSourcePopup.isEnabled) {
+        [self.midiSourcePopup selectItemAtIndex:0];
+        [appDelegate.midiInput selectSourceAtIndex:0];
+    }
+}
+
+- (void)midiDevicesChanged:(NSNotification *)notification {
+    [self refreshMIDISources];
 }
 
 - (void)refreshMIDISources {
@@ -89,10 +103,6 @@
             [self.midiSourcePopup addItemWithTitle:sourceName];
         }
         [self.midiSourcePopup setEnabled:YES];
-
-        // Select the first source by default
-        [self.midiSourcePopup selectItemAtIndex:0];
-        [appDelegate.midiInput selectSourceAtIndex:0];
     }
 }
 
@@ -104,13 +114,6 @@
         [appDelegate.midiInput selectSourceAtIndex:selectedIndex];
         NSLog(@"Selected MIDI source: %@", appDelegate.midiInput.selectedSourceName);
     }
-}
-
-#pragma mark - NSMenuDelegate
-
-- (void)menuWillOpen:(NSMenu *)menu {
-    // Refresh MIDI sources every time the menu opens
-    [self refreshMIDISources];
 }
 
 @end

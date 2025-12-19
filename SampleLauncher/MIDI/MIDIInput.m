@@ -6,8 +6,11 @@
 #import "MIDIInput.h"
 #import <CoreMIDI/CoreMIDI.h>
 
+static void MIDINotificationCallback(const MIDINotification *message, void *refCon);
+
 @interface MIDIInput ()
 @property (nonatomic, assign) MIDIEndpointRef selectedSource;
+@property (nonatomic, assign) MIDIClientRef midiClient;
 @end
 
 @implementation MIDIInput
@@ -15,10 +18,18 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // Future: MIDI client setup will go here
         _selectedSource = 0;
+
+        // Create MIDI client to receive notifications
+        MIDIClientCreate(CFSTR("SampleLauncher MIDI Client"), MIDINotificationCallback, (__bridge void *)self, &_midiClient);
     }
     return self;
+}
+
+- (void)dealloc {
+    if (_midiClient) {
+        MIDIClientDispose(_midiClient);
+    }
 }
 
 - (NSArray<NSString *> *)listSources {
@@ -71,3 +82,14 @@
 }
 
 @end
+
+#pragma mark - MIDI Notification Callback
+
+static void MIDINotificationCallback(const MIDINotification *message, void *refCon) {
+    if (message->messageID == kMIDIMsgObjectAdded || message->messageID == kMIDIMsgObjectRemoved) {
+        // Post notification on main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"MIDIDevicesChanged" object:nil];
+        });
+    }
+}
