@@ -1,6 +1,7 @@
 ## TODO
 
 - Check all these `[super x]` calls.
+- ViewController inheriting `NSMenuDelegate` ok?
 
 ## App design
 

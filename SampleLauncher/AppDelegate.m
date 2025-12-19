@@ -9,11 +9,13 @@
 #import "AppDelegate.h"
 #import "SampleBank.h"
 #import "SampleSlot.h"
+#import "MIDIInput.h"
 
 @interface AppDelegate ()
 
 @property (nonatomic, strong) AVAudioEngine *audioEngine;
 @property (nonatomic, strong, readwrite) SampleBank *sampleBank;
+@property (nonatomic, strong, readwrite) MIDIInput *midiInput;
 
 @end
 
@@ -23,6 +25,9 @@
     // Initialize audio engine and its main mixer node
     self.audioEngine = [[AVAudioEngine alloc] init];
     [self.audioEngine mainMixerNode];
+
+    // Initialize MIDI input
+    self.midiInput = [[MIDIInput alloc] init];
 
     // Initialize sample bank with stock samples
     self.sampleBank = [[SampleBank alloc] init];
