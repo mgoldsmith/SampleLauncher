@@ -7,6 +7,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MIDIInput;
+
+@protocol MIDIInputDelegate <NSObject>
+- (void)midiInput:(MIDIInput *)input didReceiveNoteOn:(UInt8)noteNumber;
+@end
+
 @interface MIDIInput : NSObject
 
 - (instancetype)init;
@@ -19,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Currently selected source name (nil if none selected)
 @property (nonatomic, copy, readonly, nullable) NSString *selectedSourceName;
+
+// Delegate to receive MIDI events
+@property (nonatomic, weak, nullable) id<MIDIInputDelegate> inputDelegate;
 
 @end
 

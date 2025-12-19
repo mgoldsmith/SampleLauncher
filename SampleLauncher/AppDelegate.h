@@ -9,6 +9,7 @@
 
 @class SampleBank;
 @class MIDIInput;
+@class MIDIController;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) SampleBank *sampleBank;
 @property (nonatomic, strong, readonly) MIDIInput *midiInput;
+@property (nonatomic, strong, readonly) MIDIController *midiController;
 
 @end
 

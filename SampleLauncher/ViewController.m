@@ -45,6 +45,18 @@
         [self.bankView.trailingAnchor constraintLessThanOrEqualToAnchor:self.view.trailingAnchor constant:-20],
         [self.bankView.bottomAnchor constraintLessThanOrEqualToAnchor:self.view.bottomAnchor constant:-20],
     ]];
+
+    // Listen for MIDI-triggered sample changes
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sampleSlotDidChange:)
+                                                 name:@"SampleSlotDidChange"
+                                               object:nil];
+}
+
+- (void)sampleSlotDidChange:(NSNotification *)notification {
+    // Update UI to reflect playback state
+    AppDelegate *appDelegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
+    [self.bankView updateFromSampleBank:appDelegate.sampleBank];
 }
 
 @end

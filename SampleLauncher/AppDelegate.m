@@ -10,12 +10,14 @@
 #import "SampleBank.h"
 #import "SampleSlot.h"
 #import "MIDIInput.h"
+#import "MIDIController.h"
 
 @interface AppDelegate ()
 
 @property (nonatomic, strong) AVAudioEngine *audioEngine;
 @property (nonatomic, strong, readwrite) SampleBank *sampleBank;
 @property (nonatomic, strong, readwrite) MIDIInput *midiInput;
+@property (nonatomic, strong, readwrite) MIDIController *midiController;
 
 @end
 
@@ -48,6 +50,10 @@
     if (![self.audioEngine startAndReturnError:&error]) {
         NSLog(@"Failed to start audio engine: %@", error);
     }
+
+    // Create MIDI controller to wire MIDI input to sample bank
+    self.midiController = [[MIDIController alloc] initWithMIDIInput:self.midiInput
+                                                         sampleBank:self.sampleBank];
 }
 
 
