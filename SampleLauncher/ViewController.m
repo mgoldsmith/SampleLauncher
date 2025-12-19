@@ -33,8 +33,11 @@
 
     [self.view addSubview:self.midiSourcePopup];
 
-    // Populate MIDI sources and select first one
-    [self refreshMIDISources];
+    // Listen for MIDI input ready notification to populate sources
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(midiInputReady:)
+                                                 name:@"MIDIInputReady"
+                                               object:nil];
 
     // Create and add sample bank view
     self.bankView = [[SampleBankView alloc] initWithFrame:NSZeroRect capacity:16];
@@ -64,6 +67,10 @@
 }
 
 #pragma mark - MIDI Source Management
+
+- (void)midiInputReady:(NSNotification *)notification {
+    [self refreshMIDISources];
+}
 
 - (void)refreshMIDISources {
     AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];

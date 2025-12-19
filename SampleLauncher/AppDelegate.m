@@ -29,6 +29,9 @@
     // Initialize MIDI input
     self.midiInput = [[MIDIInput alloc] init];
 
+    // Post notification that MIDI input is ready
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"MIDIInputReady" object:self.midiInput];
+
     // Initialize sample bank with stock samples
     self.sampleBank = [[SampleBank alloc] init];
 
