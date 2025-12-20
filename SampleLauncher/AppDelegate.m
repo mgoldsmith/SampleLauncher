@@ -11,6 +11,7 @@
 #import "SampleSlot.h"
 #import "MIDIInput.h"
 #import "MIDIController.h"
+#import "TransportClock.h"
 
 @interface AppDelegate ()
 
@@ -18,6 +19,7 @@
 @property (nonatomic, strong, readwrite) SampleBank *sampleBank;
 @property (nonatomic, strong, readwrite) MIDIInput *midiInput;
 @property (nonatomic, strong, readwrite) MIDIController *midiController;
+@property (nonatomic, strong) TransportClock *transportClock;
 
 @end
 
@@ -27,6 +29,11 @@
     // Initialize audio engine and its main mixer node
     self.audioEngine = [[AVAudioEngine alloc] init];
     [self.audioEngine mainMixerNode];
+
+    // Initialize transport clock
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.audioEngine
+                                                                  bpm:128.0
+                                                         beatsPerBar:4];
 
     // Initialize MIDI input
     self.midiInput = [[MIDIInput alloc] init];
@@ -46,10 +53,19 @@
      // Attach all sample slots to the audio engine
     [self.sampleBank attachToAudioEngine:self.audioEngine];
 
+    // Inject transport clock into all sample slots
+    for (NSUInteger i = 0; i < self.sampleBank.capacity; i++) {
+        SampleSlot *slot = [self.sampleBank slotAtIndex:i];
+        slot.transportClock = self.transportClock;
+    }
+
     // Start the audio engine
     if (![self.audioEngine startAndReturnError:&error]) {
         NSLog(@"Failed to start audio engine: %@", error);
     }
+
+    // Start the transport clock
+    [self.transportClock start];
 
     // Create MIDI controller to wire MIDI input to sample bank
     self.midiController = [[MIDIController alloc] initWithMIDIInput:self.midiInput

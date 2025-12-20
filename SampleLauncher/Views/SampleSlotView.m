@@ -131,7 +131,7 @@
 
 - (void)mouseDown:(NSEvent *)event {
     if (self.sampleSlot) {
-        [self.sampleSlot toggle];
+        [self.sampleSlot toggleQuantized];
         // Update UI immediately for responsiveness
         self.isPlaying = self.sampleSlot.isPlaying;
     }
