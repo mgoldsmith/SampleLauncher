@@ -48,6 +48,13 @@
 }
 
 - (void)attachToAudioEngine:(AVAudioEngine *)engine {
+    NSLog(@"SampleBank: Attaching to audio engine");
+    NSLog(@"  Engine output format sample rate: %.0f Hz", [engine.outputNode outputFormatForBus:0].sampleRate);
+    NSLog(@"  Engine mixer format sample rate: %.0f Hz", [engine.mainMixerNode outputFormatForBus:0].sampleRate);
+
+    // Get the desired format from the output (48kHz)
+    AVAudioFormat *outputFormat = [engine.outputNode outputFormatForBus:0];
+
     for (NSUInteger i = 0; i < self.count; i++) {
         SampleSlot *slot = [self slotAtIndex:i];
 
@@ -57,9 +64,13 @@
         }
 
         [engine attachNode:slot.playerNode];
+
+        // Connect with explicit 48kHz format to ensure mixer runs at 48kHz
         [engine connect:slot.playerNode
                      to:engine.mainMixerNode
-                 format:nil];
+                 format:outputFormat];
+
+        NSLog(@"  Slot %lu connected with explicit %.0f Hz format", (unsigned long)i, outputFormat.sampleRate);
     }
 }
 

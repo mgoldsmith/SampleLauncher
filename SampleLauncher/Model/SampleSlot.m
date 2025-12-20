@@ -30,6 +30,10 @@
         return NO;
     }
 
+    NSLog(@"Loading sample: %@", [fileURL lastPathComponent]);
+    NSLog(@"  File sample rate: %.0f Hz", audioFile.processingFormat.sampleRate);
+    NSLog(@"  File length: %lld frames", audioFile.length);
+
     AVAudioFrameCount frameCount = (AVAudioFrameCount)audioFile.length;
     self.buffer = [[AVAudioPCMBuffer alloc] initWithPCMFormat:audioFile.processingFormat
                                                  frameCapacity:frameCount];
@@ -37,6 +41,9 @@
     if (![audioFile readIntoBuffer:self.buffer error:error]) {
         return NO;
     }
+
+    NSLog(@"  Buffer sample rate: %.0f Hz", self.buffer.format.sampleRate);
+    NSLog(@"  Buffer frame length: %u", self.buffer.frameLength);
 
     self.sampleName = [[fileURL lastPathComponent] stringByDeletingPathExtension];
 
