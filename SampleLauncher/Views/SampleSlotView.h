@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *sampleName;
 @property (nonatomic, assign) BOOL isPlaying;
 @property (nonatomic, assign) CGFloat progress; // 0.0 to 1.0 for progress meter
+@property (nonatomic, weak, nullable) SampleSlot *sampleSlot;
 
 - (instancetype)initWithFrame:(NSRect)frameRect noteName:(NSString *)noteName;
 - (void)updateFromSampleSlot:(SampleSlot *)sampleSlot;

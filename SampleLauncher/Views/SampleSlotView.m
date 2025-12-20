@@ -38,6 +38,7 @@
     self.noteLabel = [[NSTextField alloc] initWithFrame:NSZeroRect];
     self.noteLabel.stringValue = self.noteName;
     self.noteLabel.editable = NO;
+    self.noteLabel.selectable = NO;
     self.noteLabel.bordered = NO;
     self.noteLabel.backgroundColor = [NSColor clearColor];
     self.noteLabel.font = [NSFont systemFontOfSize:18 weight:NSFontWeightSemibold];
@@ -49,6 +50,7 @@
     self.sampleLabel = [[NSTextField alloc] initWithFrame:NSZeroRect];
     self.sampleLabel.stringValue = @"";
     self.sampleLabel.editable = NO;
+    self.sampleLabel.selectable = NO;
     self.sampleLabel.bordered = NO;
     self.sampleLabel.backgroundColor = [NSColor clearColor];
     self.sampleLabel.font = [NSFont systemFontOfSize:11];
@@ -122,8 +124,17 @@
 }
 
 - (void)updateFromSampleSlot:(SampleSlot *)sampleSlot {
+    self.sampleSlot = sampleSlot;
     self.sampleName = sampleSlot.sampleName;
     self.isPlaying = sampleSlot.isPlaying;
+}
+
+- (void)mouseDown:(NSEvent *)event {
+    if (self.sampleSlot) {
+        [self.sampleSlot toggle];
+        // Update UI immediately for responsiveness
+        self.isPlaying = self.sampleSlot.isPlaying;
+    }
 }
 
 @end
