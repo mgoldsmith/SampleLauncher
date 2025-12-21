@@ -58,8 +58,8 @@
 }
 
 - (void)attachToAudioEngine:(AVAudioEngine *)engine {
-    // Get the desired format from the output (48kHz)
-    AVAudioFormat *outputFormat = [engine.outputNode outputFormatForBus:0];
+    // Create static 48kHz format to match stock sample rate
+    AVAudioFormat *outputFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:48000.0 channels:2];
 
     for (NSUInteger i = 0; i < self.count; i++) {
         SampleSlot *slot = [self slotAtIndex:i];
