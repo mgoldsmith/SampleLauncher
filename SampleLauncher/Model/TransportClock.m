@@ -10,6 +10,8 @@
 @property (nonatomic, strong) AVAudioTime *startTime;
 @property (nonatomic, readwrite) double bpm;
 @property (nonatomic, readwrite) NSInteger beatsPerBar;
+@property (nonatomic) double samplesPerBeat;
+@property (nonatomic) double samplesPerBar;
 @property (nonatomic, readwrite) double sampleRate;
 @end
 
@@ -32,6 +34,8 @@
     AVAudioTime *now = [self.engine.outputNode lastRenderTime];
     self.startTime = now;
     self.sampleRate = 48000.0; // Assume 48khz stock samples for purposes of this coding challenge
+    self.samplesPerBeat = (60.0 / self.bpm) * self.sampleRate;
+    self.samplesPerBar = self.samplesPerBeat * self.beatsPerBar;
 
     if (!now) {
         NSLog(@"WARNING: TransportClock started but lastRenderTime is nil!");
@@ -39,26 +43,11 @@
 }
 
 - (AVAudioTime *)nextBarBoundaryTime {
-    AVAudioTime *now = [self.engine.outputNode lastRenderTime];
-
-    if (!now) {
-        NSLog(@"WARNING: lastRenderTime is nil!");
-        return nil;
-    }
-
-    // Calculate samples per bar
-    double samplesPerBeat = (60.0 / self.bpm) * self.sampleRate;
-    double samplesPerBar = samplesPerBeat * self.beatsPerBar;
-
-    // Calculate elapsed samples since start
-    AVAudioFramePosition elapsedSamples = now.sampleTime - self.startTime.sampleTime;
-
     // Calculate current bar position (as floating point)
-    double currentBarPosition = (double)elapsedSamples / samplesPerBar;
+    double currentBarPosition = [self currentBarPosition];
     
-
     // Round up to next bar
-    AVAudioFramePosition nextBarSample = (AVAudioFramePosition)(ceil(currentBarPosition) * samplesPerBar);
+    AVAudioFramePosition nextBarSample = (AVAudioFramePosition)(ceil(currentBarPosition) * self.samplesPerBar);
 
     // Convert to absolute sample time
     AVAudioFramePosition absoluteNextBar = self.startTime.sampleTime + nextBarSample;
@@ -68,16 +57,15 @@
 
 - (double)currentBarPosition {
     AVAudioTime *now = [self.engine.outputNode lastRenderTime];
-
-    // Calculate samples per bar
-    double samplesPerBeat = (60.0 / self.bpm) * self.sampleRate;
-    double samplesPerBar = samplesPerBeat * self.beatsPerBar;
+    if (!now) {
+        NSLog(@"WARNING: lastRenderTime is nil!");
+    }
 
     // Calculate elapsed samples since start
     AVAudioFramePosition elapsedSamples = now.sampleTime - self.startTime.sampleTime;
 
     // Return current position in bars
-    return (double)elapsedSamples / samplesPerBar;
+    return (double)elapsedSamples / self.samplesPerBar;
 }
 
 @end
