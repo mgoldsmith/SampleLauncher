@@ -8,6 +8,7 @@
 #import "MIDIInput.h"
 #import "SampleBank.h"
 #import "SampleSlot.h"
+#import "TransportClock.h"
 #import "TestAudioEngineHelper.h"
 
 @interface MIDIControllerTests : XCTestCase
@@ -15,6 +16,7 @@
 @property (nonatomic, strong) MIDIInput *midiInput;
 @property (nonatomic, strong) SampleBank *sampleBank;
 @property (nonatomic, strong) AVAudioEngine *engine;
+@property (nonatomic, strong) TransportClock *transportClock;
 @property (nonatomic, strong) NSMutableArray *receivedNotifications;
 @end
 
@@ -29,6 +31,13 @@
     // Set up audio engine for slot testing
     self.engine = [TestAudioEngineHelper createTestEngineWithTestCase:self];
     [self.sampleBank attachToAudioEngine:self.engine];
+
+    // Set up transport clock to prevent "transportClock is nil" errors
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.engine
+                                                                  bpm:128.0
+                                                          beatsPerBar:4];
+    self.sampleBank.transportClock = self.transportClock;
+    [self.transportClock start];
 
     // Set up notification tracking
     self.receivedNotifications = [NSMutableArray array];
@@ -77,7 +86,7 @@
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:48];
 
     // Wait for async notification
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertEqual(self.receivedNotifications.count, 1,
                    @"Should receive one notification");
@@ -92,7 +101,7 @@
     // Note 63 (D#3) should map to slot 15
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:63];
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertEqual(self.receivedNotifications.count, 1,
                    @"Should receive one notification");
@@ -107,7 +116,7 @@
     // Note 55 (G2) should map to slot 7
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:55];
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertEqual(self.receivedNotifications.count, 1,
                    @"Should receive one notification");
@@ -124,7 +133,7 @@
         [self.receivedNotifications removeAllObjects];
 
         [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:note];
-        [self waitForNotificationWithTimeout:0.5];
+        [self waitForNotificationWithTimeout:0.1];
 
         NSUInteger expectedSlot = note - 48;
         NSNotification *notification = self.receivedNotifications.firstObject;
@@ -141,7 +150,7 @@
     // Note 47 is below the valid range
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:47];
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertEqual(self.receivedNotifications.count, 0,
                    @"Should not receive notification for note below range");
@@ -151,7 +160,7 @@
     // Note 64 is above the valid range
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:64];
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertEqual(self.receivedNotifications.count, 0,
                    @"Should not receive notification for note above range");
@@ -160,7 +169,7 @@
 - (void)testIgnoresVeryLowNote {
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:0];
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertEqual(self.receivedNotifications.count, 0,
                    @"Should not receive notification for very low note");
@@ -169,7 +178,7 @@
 - (void)testIgnoresVeryHighNote {
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:127];
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertEqual(self.receivedNotifications.count, 0,
                    @"Should not receive notification for very high note");
@@ -182,7 +191,7 @@
 
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:53]; // Note 53 -> slot 5
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     NSNotification *notification = self.receivedNotifications.firstObject;
     XCTAssertNotNil(notification, @"Should receive notification");
@@ -214,7 +223,7 @@
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:50];
     [self.midiInput.inputDelegate midiInput:self.midiInput didReceiveNoteOn:52];
 
-    [self waitForNotificationWithTimeout:0.5];
+    [self waitForNotificationWithTimeout:0.1];
 
     XCTAssertGreaterThanOrEqual(self.receivedNotifications.count, 3,
                                 @"Should receive at least 3 notifications");
