@@ -9,6 +9,7 @@
 @interface SampleSlotView ()
 @property (nonatomic, strong) NSTextField *noteLabel;
 @property (nonatomic, strong) NSTextField *sampleLabel;
+@property (nonatomic, strong) CALayer *progressLayer;
 @end
 
 @implementation SampleSlotView
@@ -18,6 +19,7 @@
     if (self) {
         _noteName = [noteName copy];
         _isPlaying = NO;
+        _progress = 0.0;
 
         [self setupUI];
     }
@@ -26,6 +28,11 @@
 
 - (void)setupUI {
     self.wantsLayer = YES;
+
+    // Progress layer (behind everything)
+    self.progressLayer = [CALayer layer];
+    self.progressLayer.frame = CGRectMake(0, 0, 0, self.bounds.size.height);
+    [self.layer addSublayer:self.progressLayer];
 
     // Note name label (centered, larger)
     self.noteLabel = [[NSTextField alloc] initWithFrame:NSZeroRect];
@@ -75,17 +82,24 @@
     [self updateAppearance];
 }
 
+- (void)setProgress:(CGFloat)progress {
+    _progress = MAX(0.0, MIN(1.0, progress));
+    [self updateProgressLayer];
+}
+
 - (void)updateAppearance {
     if (self.isPlaying) {
         // Playing state - use system accent color
         self.layer.backgroundColor = [[NSColor controlAccentColor] CGColor];
         self.noteLabel.textColor = [NSColor whiteColor];
         self.sampleLabel.textColor = [NSColor colorWithWhite:1.0 alpha:0.9];
+        self.progressLayer.backgroundColor = [[NSColor colorWithWhite:1.0 alpha:0.2] CGColor];
     } else {
         // Default state - light gray with subtle border
         self.layer.backgroundColor = [[NSColor controlBackgroundColor] CGColor];
         self.noteLabel.textColor = [NSColor labelColor];
         self.sampleLabel.textColor = [NSColor secondaryLabelColor];
+        self.progressLayer.backgroundColor = [[NSColor clearColor] CGColor];
     }
 
     // Rounded corners
@@ -94,10 +108,19 @@
     // Subtle border
     self.layer.borderWidth = 1.0;
     self.layer.borderColor = [[NSColor separatorColor] CGColor];
+
+    [self updateProgressLayer];
+}
+
+- (void)updateProgressLayer {
+    CGFloat width = self.bounds.size.width * self.progress;
+    self.progressLayer.frame = CGRectMake(0, 0, width, self.bounds.size.height);
+    self.progressLayer.cornerRadius = self.layer.cornerRadius;
 }
 
 - (void)layout {
     [super layout];
+    [self updateProgressLayer];
 }
 
 - (void)updateFromSampleSlot:(SampleSlot *)sampleSlot {
