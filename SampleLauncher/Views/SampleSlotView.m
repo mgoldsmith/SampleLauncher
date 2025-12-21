@@ -84,7 +84,13 @@
 
 - (void)setProgress:(CGFloat)progress {
     _progress = MAX(0.0, MIN(1.0, progress));
+
+    // Use a faster animation duration (10x faster than default)
+    //TODO: check this
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0.025];
     [self updateProgressLayer];
+    [CATransaction commit];
 }
 
 - (void)updateAppearance {

@@ -77,7 +77,6 @@ static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MID
 }
 
 - (void)handleMIDIEventList:(const MIDIEventList *)eventList {
-    // Use Apple's built-in parser - no manual bitshifting needed!
     MIDIEventListForEachEvent(eventList, MIDIEventVisitorCallback, (__bridge void *)self);
 }
 
@@ -109,6 +108,7 @@ static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MID
         CFStringRef name = NULL;
         MIDIObjectGetStringProperty(source, kMIDIPropertyName, &name);
 
+        // TODO: __bridge_transfer?
         if (name) {
             [sources addObject:(__bridge NSString *)name];
             CFRelease(name);
@@ -168,6 +168,7 @@ static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MID
 #pragma mark - MIDI Notification Callback
 
 static void MIDINotificationCallback(const MIDINotification *message, void *refCon) {
+    //TODO: return early
     if (message->messageID == kMIDIMsgObjectAdded || message->messageID == kMIDIMsgObjectRemoved) {
         // Post notification on main thread
         dispatch_async(dispatch_get_main_queue(), ^{

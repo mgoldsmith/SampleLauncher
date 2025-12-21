@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)playAtNextBarBoundary;
 - (void)toggleQuantized;
 
+// Progress tracking
+- (CGFloat)currentProgress; // Returns 0.0 to 1.0, representing playback position in the loop
+
 @end
 
 NS_ASSUME_NONNULL_END
