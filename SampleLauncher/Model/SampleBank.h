@@ -7,6 +7,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 @class SampleSlot;
+@class TransportClock;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSUInteger capacity;
 @property (nonatomic, readonly) NSUInteger count;
+@property (nonatomic, weak, nullable) TransportClock *transportClock;
 
 - (instancetype)init;
 - (instancetype)initWithCapacity:(NSUInteger)capacity NS_DESIGNATED_INITIALIZER;

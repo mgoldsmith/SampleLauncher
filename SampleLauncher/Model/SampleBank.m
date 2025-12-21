@@ -5,6 +5,7 @@
 
 #import "SampleBank.h"
 #import "SampleSlot.h"
+#import "TransportClock.h"
 
 @interface SampleBank ()
 @property (nonatomic, strong) NSMutableArray<SampleSlot *> *slots;
@@ -45,6 +46,15 @@
         }
     }
     return loadedCount;
+}
+
+- (void)setTransportClock:(TransportClock *)transportClock {
+    _transportClock = transportClock;
+
+    // Automatically distribute the clock to all slots
+    for (SampleSlot *slot in self.slots) {
+        slot.transportClock = transportClock;
+    }
 }
 
 - (void)attachToAudioEngine:(AVAudioEngine *)engine {

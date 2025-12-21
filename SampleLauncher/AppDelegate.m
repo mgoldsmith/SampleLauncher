@@ -53,11 +53,8 @@
      // Attach all sample slots to the audio engine
     [self.sampleBank attachToAudioEngine:self.audioEngine];
 
-    // Inject transport clock into all sample slots
-    for (NSUInteger i = 0; i < self.sampleBank.capacity; i++) {
-        SampleSlot *slot = [self.sampleBank slotAtIndex:i];
-        slot.transportClock = self.transportClock;
-    }
+    // Inject transport clock into sample bank (which distributes to all slots)
+    self.sampleBank.transportClock = self.transportClock;
 
     // Start the audio engine
     if (![self.audioEngine startAndReturnError:&error]) {
