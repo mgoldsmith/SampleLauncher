@@ -17,6 +17,7 @@ static const NSInteger kStartingMIDINote = 24; // C2
 @property (nonatomic, strong) NSGridView *gridView;
 @property (nonatomic, strong) NSArray<SampleSlotView *> *slotViews;
 @property (nonatomic, assign) NSUInteger capacity;
+@property (nonatomic, strong) NSTimer *progressUpdateTimer;
 
 @end
 
@@ -87,6 +88,13 @@ static const NSInteger kStartingMIDINote = 24; // C2
         [self.gridView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
         [self.gridView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
     ]];
+
+    // Start progress update timer (60fps for smooth animation)
+    self.progressUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60.0
+                                                                target:self
+                                                              selector:@selector(updateProgress:)
+                                                              userInfo:nil
+                                                               repeats:YES];
 }
 
 - (NSString *)noteNameForMIDINote:(NSInteger)midiNote {
@@ -140,7 +148,19 @@ static const NSInteger kStartingMIDINote = 24; // C2
     [self updateFromSampleBank:sampleBank];
 }
 
+- (void)updateProgress:(NSTimer *)timer {
+    // Update progress for each slot view from its corresponding sample slot
+    for (SampleSlotView *slotView in self.slotViews) {
+        if (slotView.sampleSlot) {
+            CGFloat progress = [slotView.sampleSlot currentProgress];
+            slotView.progress = progress;
+        }
+    }
+}
+
 - (void)dealloc {
+    [self.progressUpdateTimer invalidate];
+    self.progressUpdateTimer = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

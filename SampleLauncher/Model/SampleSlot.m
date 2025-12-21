@@ -89,4 +89,35 @@
     self.isPlaying ? [self stop] : [self playAtNextBarBoundary];
 }
 
+- (CGFloat)currentProgress {
+    // Return 0 if not playing or no buffer loaded
+    if (!self.isPlaying || !self.buffer || self.buffer.frameLength == 0) {
+        return 0.0;
+    }
+
+    // Get the last time the player rendered audio
+    AVAudioTime *lastRenderTime = self.playerNode.lastRenderTime;
+    if (!lastRenderTime || !lastRenderTime.isSampleTimeValid) {
+        return 0.0;
+    }
+
+    // Convert to player time to get the current sample position
+    AVAudioTime *playerTime = [self.playerNode playerTimeForNodeTime:lastRenderTime];
+    if (!playerTime || !playerTime.isSampleTimeValid) {
+        return 0.0;
+    }
+
+    // Calculate position within the current loop iteration
+    AVAudioFramePosition samplePosition = playerTime.sampleTime;
+    AVAudioFramePosition bufferLength = self.buffer.frameLength;
+
+    // Use modulo to get position within current loop (handles looping)
+    AVAudioFramePosition positionInLoop = samplePosition % bufferLength;
+
+    // Convert to 0.0-1.0 range
+    CGFloat progress = (CGFloat)positionInLoop / (CGFloat)bufferLength;
+
+    return progress;
+}
+
 @end
