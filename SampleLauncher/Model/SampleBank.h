@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)attachToAudioEngine:(AVAudioEngine *)engine;
 - (BOOL)loadSampleAtIndex:(NSUInteger)index fromFile:(NSString *)filePath error:(NSError **)error;
+- (void)stopAllSlots;
 
 @end
 

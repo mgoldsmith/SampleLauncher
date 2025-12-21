@@ -71,7 +71,10 @@
 
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Stop the audio engine
+    // Stop all playing slots first to prevent audio glitches
+    [self.sampleBank stopAllSlots];
+
+    // Now stop the audio engine cleanly
     [self.audioEngine stop];
 }
 

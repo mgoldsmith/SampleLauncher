@@ -89,4 +89,10 @@
     return [slot loadSampleFromFile:filePath error:error];
 }
 
+- (void)stopAllSlots {
+    for (SampleSlot *slot in self.slots) {
+        [slot stop];
+    }
+}
+
 @end
