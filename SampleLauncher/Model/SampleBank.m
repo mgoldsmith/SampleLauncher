@@ -75,8 +75,6 @@
         [engine connect:slot.playerNode
                      to:engine.mainMixerNode
                  format:outputFormat];
-
-        NSLog(@"  Slot %lu connected with explicit %.0f Hz format", (unsigned long)i, outputFormat.sampleRate);
     }
 }
 
