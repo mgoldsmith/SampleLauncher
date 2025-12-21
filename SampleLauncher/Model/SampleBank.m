@@ -70,11 +70,9 @@
         }
 
         [engine attachNode:slot.playerNode];
-
-        // Connect with explicit 48kHz format to ensure mixer runs at 48kHz
         [engine connect:slot.playerNode
                      to:engine.mainMixerNode
-                 format:outputFormat];
+                 format:outputFormat]; // 48khz
     }
 }
 
