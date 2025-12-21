@@ -30,20 +30,12 @@
         return NO;
     }
 
-    NSLog(@"Loading sample: %@", [fileURL lastPathComponent]);
-    NSLog(@"  File sample rate: %.0f Hz", audioFile.processingFormat.sampleRate);
-    NSLog(@"  File length: %lld frames", audioFile.length);
-
     AVAudioFrameCount frameCount = (AVAudioFrameCount)audioFile.length;
     self.buffer = [[AVAudioPCMBuffer alloc] initWithPCMFormat:audioFile.processingFormat
                                                  frameCapacity:frameCount];
-
     if (![audioFile readIntoBuffer:self.buffer error:error]) {
         return NO;
     }
-
-    NSLog(@"  Buffer sample rate: %.0f Hz", self.buffer.format.sampleRate);
-    NSLog(@"  Buffer frame length: %u", self.buffer.frameLength);
 
     self.sampleName = [[fileURL lastPathComponent] stringByDeletingPathExtension];
 
@@ -78,7 +70,6 @@
         return;
     }
 
-    NSLog(@"playAtNextBarBoundary: stopping player node");
     [self.playerNode stop];
 
     AVAudioTime *nextBar = [self.transportClock nextBarBoundaryTime];
@@ -88,8 +79,6 @@
         return;
     }
 
-    NSLog(@"playAtNextBarBoundary: scheduling buffer at ENGINE sample time %lld", nextBar.sampleTime);
-
     // Start the player node FIRST to establish its timeline
     [self.playerNode play];
 
@@ -97,13 +86,11 @@
     AVAudioTime *playerTime = [self.playerNode playerTimeForNodeTime:nextBar];
 
     if (playerTime) {
-        NSLog(@"playAtNextBarBoundary: converted to PLAYER time: %lld", playerTime.sampleTime);
         [self.playerNode scheduleBuffer:self.buffer
                                  atTime:playerTime
                                 options:AVAudioPlayerNodeBufferLoops
                       completionHandler:nil];
     } else {
-        NSLog(@"playAtNextBarBoundary: playerTime conversion returned nil, scheduling with node time");
         [self.playerNode scheduleBuffer:self.buffer
                                  atTime:nextBar
                                 options:AVAudioPlayerNodeBufferLoops
