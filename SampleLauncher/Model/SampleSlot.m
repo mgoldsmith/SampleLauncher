@@ -4,6 +4,7 @@
 //
 
 #import "SampleSlot.h"
+#import "TransportClock.h"
 
 @interface SampleSlot ()
 @property (nonatomic, strong, readwrite) AVAudioPlayerNode *playerNode;
@@ -32,7 +33,6 @@
     AVAudioFrameCount frameCount = (AVAudioFrameCount)audioFile.length;
     self.buffer = [[AVAudioPCMBuffer alloc] initWithPCMFormat:audioFile.processingFormat
                                                  frameCapacity:frameCount];
-
     if (![audioFile readIntoBuffer:self.buffer error:error]) {
         return NO;
     }
@@ -62,6 +62,44 @@
 
 - (BOOL)isPlaying {
     return self.playerNode.isPlaying;
+}
+
+- (void)playAtNextBarBoundary {
+    if (!self.buffer || !self.transportClock) {
+        NSLog(@"playAtNextBarBoundary: buffer or transportClock is nil");
+        return;
+    }
+
+    [self.playerNode stop];
+
+    AVAudioTime *nextBar = [self.transportClock nextBarBoundaryTime];
+
+    if (!nextBar) {
+        NSLog(@"playAtNextBarBoundary: nextBar is nil!");
+        return;
+    }
+
+    // Start the player node FIRST to establish its timeline
+    [self.playerNode play];
+
+    // Now get the player node's current time
+    AVAudioTime *playerTime = [self.playerNode playerTimeForNodeTime:nextBar];
+
+    if (playerTime) {
+        [self.playerNode scheduleBuffer:self.buffer
+                                 atTime:playerTime
+                                options:AVAudioPlayerNodeBufferLoops
+                      completionHandler:nil];
+    } else {
+        [self.playerNode scheduleBuffer:self.buffer
+                                 atTime:nextBar
+                                options:AVAudioPlayerNodeBufferLoops
+                      completionHandler:nil];
+    }
+}
+
+- (void)toggleQuantized {
+    self.isPlaying ? [self stop] : [self playAtNextBarBoundary];
 }
 
 @end

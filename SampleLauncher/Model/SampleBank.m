@@ -5,6 +5,7 @@
 
 #import "SampleBank.h"
 #import "SampleSlot.h"
+#import "TransportClock.h"
 
 @interface SampleBank ()
 @property (nonatomic, strong) NSMutableArray<SampleSlot *> *slots;
@@ -47,7 +48,19 @@
     return loadedCount;
 }
 
+- (void)setTransportClock:(TransportClock *)transportClock {
+    _transportClock = transportClock;
+
+    // Automatically distribute the clock to all slots
+    for (SampleSlot *slot in self.slots) {
+        slot.transportClock = transportClock;
+    }
+}
+
 - (void)attachToAudioEngine:(AVAudioEngine *)engine {
+    // Create static 48kHz format to match stock sample rate
+    AVAudioFormat *outputFormat = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:48000.0 channels:2];
+
     for (NSUInteger i = 0; i < self.count; i++) {
         SampleSlot *slot = [self slotAtIndex:i];
 
@@ -59,7 +72,7 @@
         [engine attachNode:slot.playerNode];
         [engine connect:slot.playerNode
                      to:engine.mainMixerNode
-                 format:nil];
+                 format:outputFormat]; // 48khz
     }
 }
 

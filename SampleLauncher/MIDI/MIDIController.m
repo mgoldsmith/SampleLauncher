@@ -39,7 +39,7 @@
     SampleSlot *slot = [self.sampleBank slotAtIndex:slotIndex];
 
     if (slot) {
-        [slot toggle];
+        [slot toggleQuantized];
 
         // Notify UI on main thread
         dispatch_async(dispatch_get_main_queue(), ^{
