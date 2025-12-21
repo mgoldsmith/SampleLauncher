@@ -5,6 +5,7 @@
 
 #import <XCTest/XCTest.h>
 #import "SampleSlot.h"
+#import "TransportClock.h"
 #import "TestAudioEngineHelper.h"
 
 // Test sample configuration - change this to use a different sample
@@ -13,6 +14,7 @@ static NSString * const kTestSampleName = @"01 Kick";
 @interface SampleSlotTests : XCTestCase
 @property (nonatomic, strong) SampleSlot *slot;
 @property (nonatomic, strong) AVAudioEngine *engine;
+@property (nonatomic, strong) TransportClock *transportClock;
 @property (nonatomic, copy) NSString *testSamplePath;
 @end
 
@@ -123,6 +125,121 @@ static NSString * const kTestSampleName = @"01 Kick";
     XCTAssertNotNil(self.slot.playerNode, @"Player node should exist");
     XCTAssertTrue([self.slot.playerNode isKindOfClass:[AVAudioPlayerNode class]],
                  @"Player node should be an AVAudioPlayerNode");
+}
+
+#pragma mark - Quantized Playback Tests
+
+- (void)testPlayAtNextBarBoundaryWithoutTransportClock {
+    [self.slot loadSampleFromFile:self.testSamplePath error:nil];
+
+    // Should not crash, but should not play either
+    XCTAssertNoThrow([self.slot playAtNextBarBoundary],
+                     @"Should not crash without transport clock");
+    XCTAssertFalse(self.slot.isPlaying,
+                   @"Should not be playing without transport clock");
+}
+
+- (void)testPlayAtNextBarBoundaryWithoutSample {
+    // Set up transport clock
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.engine
+                                                                  bpm:128.0
+                                                          beatsPerBar:4];
+    self.slot.transportClock = self.transportClock;
+    [self.transportClock start];
+
+    // Should not crash, but should not play either
+    XCTAssertNoThrow([self.slot playAtNextBarBoundary],
+                     @"Should not crash without sample");
+    XCTAssertFalse(self.slot.isPlaying,
+                   @"Should not be playing without sample");
+}
+
+- (void)testPlayAtNextBarBoundaryWithTransportClock {
+    [self.slot loadSampleFromFile:self.testSamplePath error:nil];
+
+    // Set up transport clock
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.engine
+                                                                  bpm:128.0
+                                                          beatsPerBar:4];
+    self.slot.transportClock = self.transportClock;
+    [self.transportClock start];
+
+    [self.slot playAtNextBarBoundary];
+
+    // Player node should be playing (schedules for future but starts immediately)
+    XCTAssertTrue(self.slot.isPlaying,
+                  @"Should be playing after playAtNextBarBoundary");
+}
+
+- (void)testToggleQuantizedWhenStopped {
+    [self.slot loadSampleFromFile:self.testSamplePath error:nil];
+
+    // Set up transport clock
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.engine
+                                                                  bpm:128.0
+                                                          beatsPerBar:4];
+    self.slot.transportClock = self.transportClock;
+    [self.transportClock start];
+
+    XCTAssertFalse(self.slot.isPlaying, @"Should start stopped");
+
+    [self.slot toggleQuantized];
+
+    XCTAssertTrue(self.slot.isPlaying,
+                  @"toggleQuantized should start playback when stopped");
+}
+
+- (void)testToggleQuantizedWhenPlaying {
+    [self.slot loadSampleFromFile:self.testSamplePath error:nil];
+
+    // Set up transport clock
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.engine
+                                                                  bpm:128.0
+                                                          beatsPerBar:4];
+    self.slot.transportClock = self.transportClock;
+    [self.transportClock start];
+
+    [self.slot playAtNextBarBoundary];
+    XCTAssertTrue(self.slot.isPlaying, @"Should be playing");
+
+    [self.slot toggleQuantized];
+    XCTAssertFalse(self.slot.isPlaying,
+                   @"toggleQuantized should stop playback when playing");
+}
+
+- (void)testToggleQuantizedMultipleTimes {
+    [self.slot loadSampleFromFile:self.testSamplePath error:nil];
+
+    // Set up transport clock
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.engine
+                                                                  bpm:128.0
+                                                          beatsPerBar:4];
+    self.slot.transportClock = self.transportClock;
+    [self.transportClock start];
+
+    // Toggle on
+    [self.slot toggleQuantized];
+    XCTAssertTrue(self.slot.isPlaying, @"First toggle should start");
+
+    // Toggle off
+    [self.slot toggleQuantized];
+    XCTAssertFalse(self.slot.isPlaying, @"Second toggle should stop");
+
+    // Toggle on again
+    [self.slot toggleQuantized];
+    XCTAssertTrue(self.slot.isPlaying, @"Third toggle should start again");
+}
+
+- (void)testTransportClockProperty {
+    XCTAssertNil(self.slot.transportClock, @"Transport clock should be nil initially");
+
+    self.transportClock = [[TransportClock alloc] initWithAudioEngine:self.engine
+                                                                  bpm:128.0
+                                                          beatsPerBar:4];
+    self.slot.transportClock = self.transportClock;
+
+    XCTAssertEqual(self.slot.transportClock, self.transportClock,
+                   @"Transport clock should be set correctly");
 }
 
 @end
