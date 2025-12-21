@@ -48,10 +48,6 @@
 }
 
 - (void)attachToAudioEngine:(AVAudioEngine *)engine {
-    NSLog(@"SampleBank: Attaching to audio engine");
-    NSLog(@"  Engine output format sample rate: %.0f Hz", [engine.outputNode outputFormatForBus:0].sampleRate);
-    NSLog(@"  Engine mixer format sample rate: %.0f Hz", [engine.mainMixerNode outputFormatForBus:0].sampleRate);
-
     // Get the desired format from the output (48kHz)
     AVAudioFormat *outputFormat = [engine.outputNode outputFormatForBus:0];
 
