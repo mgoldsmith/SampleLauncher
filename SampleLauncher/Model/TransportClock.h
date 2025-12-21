@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithAudioEngine:(AVAudioEngine *)engine
                                 bpm:(double)bpm
-                       beatsPerBar:(NSInteger)beatsPerBar;
+                        beatsPerBar:(NSInteger)beatsPerBar;
 
 - (void)start;
 
