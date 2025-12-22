@@ -50,9 +50,13 @@ static void MIDINotificationCallback(const MIDINotification *message, void *refC
 static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MIDIUniversalMessage message) {
     MIDIInput *self = (__bridge MIDIInput *)context;
 
-    // Handle MIDI 1.0 channel voice messages (type 0x2)
-    if (message.type == kMIDIMessageTypeChannelVoice1) {
-        if (message.channelVoice1.status == kMIDICVStatusNoteOn) {
+    switch (message.type) {
+        case kMIDIMessageTypeChannelVoice1: {
+            // Return early if not a note on message
+            if (message.channelVoice1.status != kMIDICVStatusNoteOn) {
+                return;
+            }
+
             UInt8 noteNumber = message.channelVoice1.note.number;
             UInt8 velocity = message.channelVoice1.note.velocity;
 
@@ -60,11 +64,15 @@ static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MID
             if (velocity > 0) {
                 [self.inputDelegate midiInput:self didReceiveNoteOn:noteNumber];
             }
+            break;
         }
-    }
-    // Handle MIDI 2.0 channel voice messages (type 0x4)
-    else if (message.type == kMIDIMessageTypeChannelVoice2) {
-        if (message.channelVoice2.status == kMIDICVStatusNoteOn) {
+
+        case kMIDIMessageTypeChannelVoice2: {
+            // Return early if not a note on message
+            if (message.channelVoice2.status != kMIDICVStatusNoteOn) {
+                return;
+            }
+
             UInt8 noteNumber = message.channelVoice2.note.number;
             UInt16 velocity = message.channelVoice2.note.velocity;
 
@@ -72,7 +80,12 @@ static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MID
             if (velocity > 0) {
                 [self.inputDelegate midiInput:self didReceiveNoteOn:noteNumber];
             }
+            break;
         }
+
+        default:
+            // Ignore other message types
+            return;
     }
 }
 
