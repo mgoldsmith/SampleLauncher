@@ -239,10 +239,8 @@ static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MID
         CFStringRef name = NULL;
         MIDIObjectGetStringProperty(source, kMIDIPropertyName, &name);
 
-        // TODO: __bridge_transfer?
         if (name) {
-            [sources addObject:(__bridge NSString *)name];
-            CFRelease(name);
+            [sources addObject:(__bridge_transfer NSString *)name];
         } else {
             [sources addObject:[NSString stringWithFormat:@"MIDI Source %d", (int)i]];
         }
