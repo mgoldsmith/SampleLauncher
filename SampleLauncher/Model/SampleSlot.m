@@ -69,7 +69,6 @@
 
 - (void)playAtNextBarBoundary {
     if (!self.buffer || !self.transportClock) {
-        NSLog(@"playAtNextBarBoundary: buffer or transportClock is nil");
         return;
     }
     [self.playerNode stop];

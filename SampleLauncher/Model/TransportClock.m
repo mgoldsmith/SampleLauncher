@@ -58,7 +58,7 @@
 - (double)currentBarPosition {
     AVAudioTime *now = [self.engine.outputNode lastRenderTime];
     if (!now) {
-        NSLog(@"WARNING: lastRenderTime is nil!");
+        return 0.0;
     }
 
     // Calculate elapsed samples since start
