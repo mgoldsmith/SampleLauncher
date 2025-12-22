@@ -299,7 +299,6 @@ static void MIDIEventVisitorCallback(void *context, MIDITimeStamp timeStamp, MID
 #pragma mark - MIDI Notification Callback
 
 static void MIDINotificationCallback(const MIDINotification *message, void *refCon) {
-    //TODO: return early
     if (message->messageID == kMIDIMsgObjectAdded || message->messageID == kMIDIMsgObjectRemoved) {
         // Post notification on main thread
         dispatch_async(dispatch_get_main_queue(), ^{
