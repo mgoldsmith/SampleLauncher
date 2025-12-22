@@ -1,14 +1,60 @@
+# SampleLauncher
+
+Simple macOS app that acts similarly to Ableton's Clip view, launching a static set of loops based on MIDI input and clicks on the UI. Loops play in sync with each other at the resolution of one bar.
+
 ## System Requirements
 
-- MacOS 11.0+
+- macOS 11.0+
 
-## App design
+## Building and Running
+
+Open the XCode project and run the `Run` action.
+
+## Usage
+
+### MIDI Setup
+
+Once you have at least one MIDI controller plugged in, just choose it from the dropdown list at the top of the app.
+
+### Controls
+
+**MIDI Note Mapping:**
+- C2 (note 48) → Sample slot 1
+- C#2 (note 49) → Sample slot 2
+- ...
+- D#3 (note 63) → Sample slot 16
+
+MIDI notes queue their respective loops to start playing from the beginning of the loop at the start of the next bar. MIDI notes on already-playing loops will immediately pause the loop.
+
+**Mouse Controls:**
+
+Click sample slots to achieve the same effect as triggering them via MIDI.
+
+## App Design
 
 My initial idea was to implement something similar to Native Instruments's Battery, or Ableton's Drum Rack. However, the spec designates that MIDI assignments should `Start/Stop Samples`. Toggling playstates didn't make sense to me for a "sampler" instrument that plays one-shots, so I decided to make the application work with loops and act more like Ableton's clip view.
 
-After looking through some samples at add as stock samples, it quickly dawned on me that triggering clips won't lead to any decent-sounding results without playback sync. Implementing dynamic BPM and sample stretching felt way out of scope for the project, so I went with fixed length samples to avoid the need for timestretching. I picked an 8 bar section from one of my original tracks and bounced the 15 stems that were playing. To implement phrase syncing, I `INSERT PHRASE SYNCING STRATEGY HERE`.
+After looking through some samples to add as stock samples, it quickly dawned on me that triggering clips won't lead to any decent-sounding results without playback sync. Implementing dynamic BPM and sample stretching felt way out of scope for the project, so I went with fixed length samples to avoid the need for timestretching. I picked an 8 bar section from one of my original tracks and bounced the 15 stems that were playing.
 
-## Limitations and assumptions
+`TransportClock` acts similarly to Ableton's metronome, providing a source of truth for the individual sample slots and where we are in the bar. This means that even when no samples are playing, the first sample that starts will wait for the `TransportClock`'s timing. Ideally, if nothing's playing, the first loop will trigger immediately. However, the sync aspect of this already felt like a lot of extra scope, so I left it as-is.
+
+## Architecture
+
+### Model
+
+The heart of the app is a `SampleBank` that houses a number of `SampleSlot`s. The `SampleSlot`s are responsible for hodling stock samples and scheduling their audio into the slot's `AVAudioPlayerNode`. A `SampleSlot` also reports its play state, play progress, and sample name to the `SampleSlotView`. The `SampleBank` mainly exists to conveniently encapsulate its `SampleSlot`s.
+
+### MIDI
+
+MIDI handling is split into two classes: `MIDIController` and `MIDIInput`. `MIDIController` is minimal, and mainly responsible for connecting `MIDIInput` and `SampleBank` so that MIDI events can play and stop samples.
+
+`MIDIInput` does the bulk of MIDI handling. It's responsible for listening to a specific MIDI source and sending the source's MIDI events to `MIDIController`. MIDI events are written to a lock-free ringbuffer to stay realtime-safe. The ringbuffer is then consumed by a separate thread, which handles MIDI events and ultimately schedules `SampleSlot` audio buffers into the `AVAudioEngine`.
+
+## Testing
+
+To run tests, open the XCode project and run the `Test` action.
+
+## Limitations and Assumptions
 
 - The app loads the stock samples and connects its slots to the audio engine on startup. Dynamic loading of user samples isn't supported (from the spec: `Audio content may be fixed`).
 - As mentioned in the `App Design` section, only stock samples that are exactly 8 bars at 128 BPM are supported to maintain tempo and bar-level phrase sync.
