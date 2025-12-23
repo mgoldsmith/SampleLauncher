@@ -4,7 +4,7 @@ Simple macOS app that acts similarly to Ableton's Clip view, launching a static 
 
 ## System Requirements
 
-- macOS 11.0+
+`macOS` and `XCode`. I tested with `macOS v15.6.1` and `XCode v26.1.1`.
 
 ## Building, Running, and Testing
 
@@ -14,7 +14,7 @@ Open the XCode project, set your development team in the project settings, and r
 
 ### MIDI Setup
 
-Once you have at least one MIDI controller plugged in, just choose it from the dropdown list at the top of the app.
+Once you have at least one MIDI controller plugged in, make sure it's selected in the dropdown list at the top of the app.
 
 ### Controls
 
@@ -50,7 +50,7 @@ MIDI handling is split into two classes: `MIDIController` and `MIDIInput`. `MIDI
 
 `MIDIInput` does the bulk of MIDI handling. It's responsible for listening to a specific MIDI source and sending the source's MIDI events to `MIDIController`. MIDI events are written to a lock-free ringbuffer to stay realtime-safe. The ringbuffer is then consumed by a separate thread, which handles MIDI events and ultimately schedules `SampleSlot` audio buffers into the `AVAudioEngine`.
 
-## Limitations and Assumptions
+### Limitations and Assumptions
 
 - The app loads the stock samples and connects its slots to the audio engine on startup. Dynamic loading of user samples isn't supported (from the spec: `Audio content may be fixed`).
 - As mentioned in the `App Design` section, only stock samples that are exactly 8 bars at 128 BPM are supported to maintain tempo and bar-level phrase sync.
@@ -64,4 +64,4 @@ Using Claude allowed me to work much faster and fit everything I wanted into the
 
 ## Closing thoughts
 
-I had a lot of fun working on this project. I hope you like it and I'm looking forward to your feedback!
+I had a lot of fun working on this project. I'm sure there are more improvements I could make, but I'm calling it done today (Dec. 23rd) so that I can concentrate on spending time with my family. I hope you like it and I'm looking forward to your feedback!
