@@ -6,9 +6,9 @@ Simple macOS app that acts similarly to Ableton's Clip view, launching a static 
 
 - macOS 11.0+
 
-## Building and Running
+## Building, Running, and Testing
 
-Open the XCode project and run the `Run` action.
+Open the XCode project, set your development team in the project settings, and run the `Run` or `Test` action.
 
 ## Usage
 
@@ -49,10 +49,6 @@ The heart of the app is a `SampleBank` that houses a number of `SampleSlot`s. Th
 MIDI handling is split into two classes: `MIDIController` and `MIDIInput`. `MIDIController` is minimal, and mainly responsible for connecting `MIDIInput` and `SampleBank` so that MIDI events can play and stop samples.
 
 `MIDIInput` does the bulk of MIDI handling. It's responsible for listening to a specific MIDI source and sending the source's MIDI events to `MIDIController`. MIDI events are written to a lock-free ringbuffer to stay realtime-safe. The ringbuffer is then consumed by a separate thread, which handles MIDI events and ultimately schedules `SampleSlot` audio buffers into the `AVAudioEngine`.
-
-## Testing
-
-To run tests, open the XCode project and run the `Test` action.
 
 ## Limitations and Assumptions
 
