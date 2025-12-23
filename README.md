@@ -4,7 +4,7 @@ Simple macOS app that acts similarly to Ableton's Clip view, launching a static 
 
 ## System Requirements
 
-`macOS` and `XCode`. I tested with `macOS v15.6.1` and `XCode v26.1.1`.
+`macOS` and `Xcode`. I tested with `macOS v15.6.1` and `Xcode v26.1.1`.
 
 ## Building, Running, and Testing
 
@@ -42,7 +42,7 @@ After looking through some samples to add as stock samples, it quickly dawned on
 
 ### Model
 
-The heart of the app is a `SampleBank` that houses a number of `SampleSlot`s. The `SampleSlot`s are responsible for hodling stock samples and scheduling their audio into the slot's `AVAudioPlayerNode`. A `SampleSlot` also reports its play state, play progress, and sample name to the `SampleSlotView`. The `SampleBank` mainly exists to conveniently encapsulate its `SampleSlot`s.
+The heart of the app is a `SampleBank` that houses a number of `SampleSlot`s. The `SampleSlot`s are responsible for holding stock samples and scheduling their audio into the slot's `AVAudioPlayerNode`. A `SampleSlot` also reports its play state, play progress, and sample name to the `SampleSlotView`. The `SampleBank` mainly exists to conveniently encapsulate its `SampleSlot`s.
 
 ### MIDI
 
@@ -50,7 +50,7 @@ MIDI handling is split into two classes: `MIDIController` and `MIDIInput`. `MIDI
 
 `MIDIInput` does the bulk of MIDI handling. It's responsible for listening to a specific MIDI source and sending the source's MIDI events to `MIDIController`. MIDI events are written to a lock-free ringbuffer to stay realtime-safe. The ringbuffer is then consumed by a separate thread, which handles MIDI events and ultimately schedules `SampleSlot` audio buffers into the `AVAudioEngine`.
 
-### Limitations and Assumptions
+## Limitations and Assumptions
 
 - The app loads the stock samples and connects its slots to the audio engine on startup. Dynamic loading of user samples isn't supported (from the spec: `Audio content may be fixed`).
 - As mentioned in the `App Design` section, only stock samples that are exactly 8 bars at 128 BPM are supported to maintain tempo and bar-level phrase sync.
