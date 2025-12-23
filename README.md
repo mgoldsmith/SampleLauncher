@@ -36,7 +36,7 @@ My initial idea was to implement something similar to Native Instruments's Batte
 
 After looking through some samples to add as stock samples, it quickly dawned on me that triggering clips won't lead to any decent-sounding results without playback sync. Implementing dynamic BPM and sample stretching felt way out of scope for the project, so I went with fixed length samples to avoid the need for timestretching. I picked an 8 bar section from one of my original tracks and bounced the 15 stems that were playing.
 
-`TransportClock` acts similarly to Ableton's metronome, providing a source of truth for the individual sample slots and where we are in the bar. This means that even when no samples are playing, the first sample that starts will wait for the `TransportClock`'s timing. Ideally, if nothing's playing, the first loop will trigger immediately. However, the sync aspect of this already felt like a lot of extra scope, so I left it as-is.
+`TransportClock` acts similarly to Ableton's metronome, providing a source of truth for the individual sample slots and where we are in the bar. This means that even when no samples are playing, the first sample that starts will wait for the `TransportClock`'s timing. Ideally, if nothing's playing, the first loop would trigger immediately. However, the sync aspect of this already felt like a lot of extra scope, so I left it as-is.
 
 ## Architecture
 
