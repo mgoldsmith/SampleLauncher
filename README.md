@@ -54,3 +54,14 @@ MIDI handling is split into two classes: `MIDIController` and `MIDIInput`. `MIDI
 
 - The app loads the stock samples and connects its slots to the audio engine on startup. Dynamic loading of user samples isn't supported (from the spec: `Audio content may be fixed`).
 - As mentioned in the `App Design` section, only stock samples that are exactly 8 bars at 128 BPM are supported to maintain tempo and bar-level phrase sync.
+- There are a few magic numbers baked into various places. For example, multiple places use the hard-coded `48khz` that I assume for the stock samples. I would normally replace these spots with constant definitions, but I ran out of time given the already-large scope and the time of year (December 23rd at the time of writing).
+
+## General strategy and use of AI
+
+I find AI to be especially useful for generating boilerplate code and tests. I began by designing the large-scale architecture such as the `SampleBank`, `SampleSlot` class responsibilities. Once I had an idea of how I would approach the application, I used Claude Code to generate the new classes one by one, closely reviewing each line and correcting mistakes I saw.
+
+Using Claude allowed me to work much faster and fit everything I wanted into the app within the week I spent on it.
+
+## Closing thoughts
+
+I had a lot of fun working on this project. I hope you like it and I'm looking forward to your feedback!
